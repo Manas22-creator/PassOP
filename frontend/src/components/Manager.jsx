@@ -3,9 +3,10 @@ import React from "react";
 import { useRef, useState, useEffect } from "react";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import { v4 as uuidv4 } from "uuid";
-
-
 import "react-toastify/dist/ReactToastify.css";
+
+// ✅ Base URL setup (auto switches between local & Render)
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 const Manager = () => {
   const ref = useRef();
@@ -14,16 +15,18 @@ const Manager = () => {
   const [passwordArray, setPasswordArray] = useState([]);
 
   const getPasswords = async () => {
-    let req = await fetch("https://passop-7qba.onrender.com/")
-    let password = await req.json();
-    setPasswordArray(password);
-
-  }
-
+    try {
+      const req = await fetch(`${BASE_URL}/`);
+      const password = await req.json();
+      setPasswordArray(password);
+    } catch (error) {
+      console.error("Error fetching passwords:", error);
+      toast.error("Failed to load passwords.", { theme: "dark" });
+    }
+  };
 
   useEffect(() => {
-    getPasswords()
-
+    getPasswords();
   }, []);
 
   const copyText = (text) => {
@@ -38,9 +41,7 @@ const Manager = () => {
   const showPassword = () => {
     if (!passwordRef.current || !ref.current) return;
 
-    // Get current image filename (works even if browser converts it to an absolute URL)
     const currentSrc = ref.current.src.split("/").pop();
-
     if (currentSrc === "eye.png") {
       ref.current.src = "icons/eyecross.png";
       passwordRef.current.type = "text";
@@ -50,53 +51,58 @@ const Manager = () => {
     }
   };
 
+  const savePassword = async () => {
+    if (form.site.length > 3 && form.username.length > 3 && form.password.length > 3) {
+      if (form.id) {
+        await fetch(`${BASE_URL}/`, {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: form.id }),
+        });
+      }
 
- const savePassword = async () => {
-  if (form.site.length > 3 && form.username.length > 3 && form.password.length > 3) {
-    // If editing an existing password (has an id)
-    if (form.id) {
-      await fetch("https://passop-7qba.onrender.com/", {
-        method: "DELETE",
+      const newItem = { ...form, id: uuidv4() };
+      const newPasswords = [...passwordArray, newItem];
+      setPasswordArray(newPasswords);
+
+      await fetch(`${BASE_URL}/`, {
+        method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: form.id }),
+        body: JSON.stringify(newItem),
+      });
+
+      setform({ site: "", username: "", password: "" });
+      toast.success("Password saved!", {
+        position: "top-right",
+        autoClose: 3000,
+        theme: "dark",
+      });
+    } else {
+      toast.error("Please fill all the fields correctly!", {
+        position: "top-right",
+        autoClose: 3000,
+        theme: "dark",
       });
     }
-
-    // Now save new/updated entry
-    const newItem = { ...form, id: uuidv4() };
-    const newPasswords = [...passwordArray, newItem];
-    setPasswordArray(newPasswords);
-
-    await fetch("https://passop-7qba.onrender.com/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(newItem),
-    });
-
-    setform({ site: "", username: "", password: "" });
-    toast.success("Password saved!", {
-      position: "top-right",
-      autoClose: 3000,
-      theme: "dark",
-    });
-  } else {
-    toast.error("Please fill all the fields correctly!", {
-      position: "top-right",
-      autoClose: 3000,
-      theme: "dark",
-    });
-  }
-};
-
+  };
 
   const deletePassword = async (id) => {
     const c = confirm("Are you sure you want to delete this password?");
     if (c) {
       const updated = passwordArray.filter((item) => item.id !== id);
       setPasswordArray(updated);
-      // localStorage.setItem("passwords", JSON.stringify(updated));
-      let res = await fetch("https://passop-7qba.onrender.com/", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }) })
-      toast.error("Password Deleted!", { position: "top-right", autoClose: 3000, theme: "dark" });
+
+      await fetch(`${BASE_URL}/`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+
+      toast.error("Password Deleted!", {
+        position: "top-right",
+        autoClose: 3000,
+        theme: "dark",
+      });
     }
   };
 
@@ -113,7 +119,6 @@ const Manager = () => {
 
   return (
     <>
-      {/* Single ToastContainer. Use string 'bounce' to avoid bundler export issues in some setups */}
       <ToastContainer
         position="top-right"
         autoClose={3000}
@@ -149,7 +154,6 @@ const Manager = () => {
             id="site"
           />
 
-          {/* Inputs stack on small screens, align side-by-side on md */}
           <div className="flex flex-col md:flex-row w-full gap-4 md:gap-8 justify-between max-w-3xl">
             <input
               value={form.username}
@@ -182,7 +186,12 @@ const Manager = () => {
             onClick={savePassword}
             className="flex justify-center items-center bg-blue-600 hover:bg-blue-400 border-2 border-blue-900 rounded-full px-6 py-2 gap-2"
           >
-            <lord-icon src="https://cdn.lordicon.com/vjgknpfx.json" trigger="hover" stroke="bold" state="hover-swirl" />
+            <lord-icon
+              src="https://cdn.lordicon.com/vjgknpfx.json"
+              trigger="hover"
+              stroke="bold"
+              state="hover-swirl"
+            />
             Save Password
           </button>
         </div>
@@ -192,9 +201,9 @@ const Manager = () => {
 
           {passwordArray.length === 0 && <div>No password to show</div>}
 
-          {/* TABLE for md+ screens */}
           {passwordArray.length !== 0 && (
             <>
+              {/* Table View */}
               <div className="hidden md:block overflow-x-auto">
                 <table className="table-auto w-full rounded-md overflow-hidden mb-10">
                   <thead className="bg-blue-800 text-white">
@@ -213,8 +222,8 @@ const Manager = () => {
                             <a href={item.site} target="_blank" rel="noreferrer" className="truncate max-w-xs">
                               {item.site}
                             </a>
-                            <button className="p-1" onClick={() => copyText(item.site)} aria-label="Copy site">
-                              <img className="w-6 h-6" src="icons/copy-solid-full.svg" alt="copy icon" />
+                            <button className="p-1" onClick={() => copyText(item.site)}>
+                              <img className="w-6 h-6" src="icons/copy-solid-full.svg" alt="copy" />
                             </button>
                           </div>
                         </td>
@@ -222,8 +231,8 @@ const Manager = () => {
                         <td className="text-center py-2 border border-white">
                           <div className="flex items-center justify-center gap-2">
                             <span className="truncate max-w-xs">{item.username}</span>
-                            <button className="p-1" onClick={() => copyText(item.username)} aria-label="Copy username">
-                              <img className="w-6 h-6" src="icons/copy-solid-full.svg" alt="copy icon" />
+                            <button className="p-1" onClick={() => copyText(item.username)}>
+                              <img className="w-6 h-6" src="icons/copy-solid-full.svg" alt="copy" />
                             </button>
                           </div>
                         </td>
@@ -231,19 +240,33 @@ const Manager = () => {
                         <td className="text-center py-2 border border-white">
                           <div className="flex items-center justify-center gap-2">
                             <span className="truncate max-w-xs">{"*".repeat(item.password.length)}</span>
-                            <button className="p-1" onClick={() => copyText(item.password)} aria-label="Copy password">
-                              <img className="w-6 h-6" src="icons/copy-solid-full.svg" alt="copy icon" />
+                            <button className="p-1" onClick={() => copyText(item.password)}>
+                              <img className="w-6 h-6" src="icons/copy-solid-full.svg" alt="copy" />
                             </button>
                           </div>
                         </td>
 
                         <td className="text-center py-2 border border-white">
                           <div className="flex items-center justify-center gap-2">
-                            <button onClick={() => editPassword(item.id)} aria-label="Edit" className="p-1">
-                              <lord-icon src="https://cdn.lordicon.com/exymduqj.json" trigger="hover" stroke="bold" state="hover-line" colors="primary:#121331,secondary:#104891" style={{ width: "25px", height: "25px" }} />
+                            <button onClick={() => editPassword(item.id)} className="p-1">
+                              <lord-icon
+                                src="https://cdn.lordicon.com/exymduqj.json"
+                                trigger="hover"
+                                stroke="bold"
+                                state="hover-line"
+                                colors="primary:#121331,secondary:#104891"
+                                style={{ width: "25px", height: "25px" }}
+                              />
                             </button>
-                            <button onClick={() => deletePassword(item.id)} aria-label="Delete" className="p-1">
-                              <lord-icon src="https://cdn.lordicon.com/jzinekkv.json" trigger="morph" stroke="bold" state="morph-trash-in" colors="primary:#121331,secondary:#0a2e5c" style={{ width: "25px", height: "25px" }} />
+                            <button onClick={() => deletePassword(item.id)} className="p-1">
+                              <lord-icon
+                                src="https://cdn.lordicon.com/jzinekkv.json"
+                                trigger="morph"
+                                stroke="bold"
+                                state="morph-trash-in"
+                                colors="primary:#121331,secondary:#0a2e5c"
+                                style={{ width: "25px", height: "25px" }}
+                              />
                             </button>
                           </div>
                         </td>
@@ -253,7 +276,7 @@ const Manager = () => {
                 </table>
               </div>
 
-              {/* CARD list for small screens (mobile / small tablets) */}
+              {/* Card View for Mobile */}
               <div className="md:hidden flex flex-col gap-4">
                 {passwordArray.map((item) => (
                   <div key={item.id} className="bg-blue-100 rounded-lg p-4 shadow-sm">
@@ -266,23 +289,37 @@ const Manager = () => {
 
                       <div className="flex flex-col items-end gap-2">
                         <div className="flex gap-1">
-                          <button onClick={() => copyText(item.site)} aria-label="Copy site" className="p-1">
+                          <button onClick={() => copyText(item.site)} className="p-1">
                             <img className="w-6 h-6" src="icons/copy-solid-full.svg" alt="copy" />
                           </button>
-                          <button onClick={() => copyText(item.username)} aria-label="Copy username" className="p-1">
+                          <button onClick={() => copyText(item.username)} className="p-1">
                             <img className="w-6 h-6" src="icons/copy-solid-full.svg" alt="copy" />
                           </button>
-                          <button onClick={() => copyText(item.password)} aria-label="Copy password" className="p-1">
+                          <button onClick={() => copyText(item.password)} className="p-1">
                             <img className="w-6 h-6" src="icons/copy-solid-full.svg" alt="copy" />
                           </button>
                         </div>
 
                         <div className="flex gap-2 mt-1">
-                          <button onClick={() => editPassword(item.id)} aria-label="Edit" className="p-1">
-                            <lord-icon src="https://cdn.lordicon.com/exymduqj.json" trigger="hover" stroke="bold" state="hover-line" colors="primary:#121331,secondary:#104891" style={{ width: "22px", height: "22px" }} />
+                          <button onClick={() => editPassword(item.id)} className="p-1">
+                            <lord-icon
+                              src="https://cdn.lordicon.com/exymduqj.json"
+                              trigger="hover"
+                              stroke="bold"
+                              state="hover-line"
+                              colors="primary:#121331,secondary:#104891"
+                              style={{ width: "22px", height: "22px" }}
+                            />
                           </button>
-                          <button onClick={() => deletePassword(item.id)} aria-label="Delete" className="p-1">
-                            <lord-icon src="https://cdn.lordicon.com/jzinekkv.json" trigger="morph" stroke="bold" state="morph-trash-in" colors="primary:#121331,secondary:#0a2e5c" style={{ width: "22px", height: "22px" }} />
+                          <button onClick={() => deletePassword(item.id)} className="p-1">
+                            <lord-icon
+                              src="https://cdn.lordicon.com/jzinekkv.json"
+                              trigger="morph"
+                              stroke="bold"
+                              state="morph-trash-in"
+                              colors="primary:#121331,secondary:#0a2e5c"
+                              style={{ width: "22px", height: "22px" }}
+                            />
                           </button>
                         </div>
                       </div>
