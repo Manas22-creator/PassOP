@@ -1,59 +1,58 @@
 🔐 PassOP – Your Secure Password Manager
 
-🌐 Live Demo
-[🔗 Visit the Live Website – PassOP](https://PassOP.netlify.app/)
+🌐 Live Demo  
+🔗 **Frontend:** [https://passop-6l55.onrender.com](https://passop-6l55.onrender.com)  
+🔗 **Backend API:** [https://passop-7qba.onrender.com](https://passop-7qba.onrender.com) 
+
+---
 
 🧭 Overview
 
-PassOP is a secure, modern, and fully responsive password manager web application designed to help users safely store, manage, and access their passwords anytime, anywhere.
-Built using React.js, Node.js, Express, and MongoDB, this full-stack project demonstrates strong frontend and backend integration with authentication, encryption, and CRUD functionality.
+**PassOP** is a secure, modern, and fully responsive **MERN Stack Password Manager** web application that helps users safely store, manage, and access their credentials anytime, anywhere.  
+It’s built using **React.js (Vite)**, **Node.js**, **Express.js**, and **MongoDB Atlas**, demonstrating strong frontend–backend integration with CRUD operations and RESTful API communication.
 
+---
 📌 Key Highlights
 
-✅ Add, update, and delete saved passwords
-✅ Secure login and signup system (with bcrypt encryption)
-✅ Eye icon to toggle password visibility
-✅ Copy password to clipboard
-✅ Search and manage credentials efficiently
-✅ Clean and responsive UI (desktop + mobile)
-✅ Fully integrated backend with MongoDB Atlas
+✅ Add, update, and delete saved passwords  
+✅ Eye icon to toggle password visibility  
+✅ Copy credentials to clipboard  
+✅ Search and manage passwords efficiently  
+✅ Clean, responsive UI (desktop + mobile)  
+✅ Backend integrated with MongoDB Atlas  
+✅ Hosted on Render (Full-Stack Deployment)
+
+---
 
 🚀 Technologies Used
+
 🖥️ Frontend
-
-⚛️ React.js (Vite) – Component-based UI framework
-
-🎨 Tailwind CSS – Fast and modern styling
-
-🧠 JavaScript (ES6+) – Client-side interactivity
-
-🔄 Axios / Fetch API – Communication with backend
+- ⚛️ **React.js (Vite)** – Component-based UI framework  
+- 🎨 **Tailwind CSS** – Fast, modern styling  
+- 🧠 **JavaScript (ES6+)** – Interactive client-side logic  
+- 🔄 **Fetch API** – Communicating with backend REST API  
 
 🛠️ Backend
+- ⚡ **Node.js** – JavaScript runtime environment  
+- 🚀 **Express.js** – Lightweight web server framework  
+- 🗄️ **MongoDB Atlas** – Cloud database for password storage  
+- 🔑 **dotenv** – Environment variable management  
+- 🌍 **CORS** – Cross-origin resource sharing  
 
-⚡ Node.js – JavaScript runtime environment
-
-🚀 Express.js – Server-side web framework
-
-🗄️ MongoDB Atlas – Cloud database for storing encrypted credentials
-
-🔐 bcrypt.js – Secure password hashing
-
-🔑 jsonwebtoken (JWT) – Authentication & authorization
-
-🌍 CORS – Cross-origin resource sharing
-
-⚙️ dotenv – Manage environment variables securely
+---
 
 🧩 Features
-Feature	Description
-🔒 User Authentication	Secure registration and login using bcrypt & JWT
-🗝️ Password Management: Save, edit, and delete credentials
-👁️ Toggle Visibility	S: how/hide passwords with an eye icon
-📋 Copy Function: Instantly copy credentials to the clipboard
-🔍 Search Bar: Quickly find saved passwords
-📱 Responsive Design	Works smoothly on all screen sizes
-☁️ Cloud Integration	MongoDB Atlas for persistent storage
+
+| Feature | Description |
+|----------|-------------|
+| 🔒 Password Management | Add, edit, and delete credentials securely |
+| 👁️ Toggle Visibility | Show/hide passwords using eye icon |
+| 📋 Copy Function | Instantly copy passwords to clipboard |
+| 🔍 Search & Filter | Quickly find stored credentials |
+| 📱 Responsive Design | Works seamlessly across devices |
+| ☁️ Cloud Integration | Data stored securely in MongoDB Atlas |
+
+---
 📂 Project Structure
 ```bash
 
@@ -86,6 +85,7 @@ PassOP/
 │   ├── postcss.config.js
 │   ├── tailwind.config.js
 │   └── vite.config.js
+│   └── .env
 │
 ├── .gitignore
 ├── package-lock.json
@@ -96,97 +96,97 @@ PassOP/
 
 🧠 How It Works
 
-User registers with a username, email, and password (hashed with bcrypt).
+1. The backend provides RESTful APIs for storing and retrieving passwords.  
+2. The frontend fetches and displays credentials using secure endpoints.  
+3. All passwords are stored in **MongoDB Atlas**.  
+4. The app supports CRUD (Create, Read, Update, Delete) operations.  
+5. Fully deployed backend + frontend with CORS-enabled API calls.
 
-On login, JWT tokens authenticate access to user-specific data.
-
-Password entries are stored in MongoDB Atlas under each user’s ID.
-
-The frontend allows users to add, edit, and delete credentials securely.
-
-All API routes are protected — unauthorized users cannot access data.
+---
 
 🧰 Installation & Setup
+
 ✅ Prerequisites
+- Node.js (v18+ recommended)  
+- MongoDB Atlas account  
+- VS Code  
 
-Node.js (v18+ recommended)
-
-MongoDB Atlas account
-
-VS Code
 
 ⚙️ Backend Setup
+```bash
 # Clone repository
-```
 git clone https://github.com/Manas22-creator/PassOP.git
 cd PassOP/backend
-```
+
 # Install dependencies
-```
 npm install
-```
 
 # Create .env file
-```
-MONGO_URI = your_mongodb_connection_string
-JWT_SECRET = your_secret_key
-PORT = 5000
-```
+MONGO_URI=your_mongodb_connection_string
+PORT=3000
 
 # Start backend
-```
 npm start
+# Server runs at http://localhost:3000
 ```
-
-
-Server runs at: http://localhost:5000
 
 💻 Frontend Setup
 ```
-cd ../
+cd ../frontend
+
+# Install dependencies
 npm install
+
+# Run frontend (development)
 npm run dev
+# App runs at http://localhost:5173
+
 ```
 
+---
 
 App runs at: http://localhost:5173
  (default Vite port)
 
 📋 API Endpoints
 Method	Endpoint	Description
-POST	/api/auth/register	Register a new user
-POST	/api/auth/login	Login existing user
-GET	/api/passwords	Fetch all saved passwords
-POST	/api/passwords	Add a new password entry
-PUT	/api/passwords/:id	Update an existing password
-DELETE	/api/passwords/:id	Delete a password entry
+GET	/	Fetch all saved passwords
+POST	/	Add a new password entry
+DELETE	/	Delete a password by ID
+
+---
 ☁️ Deployment
+Layer	Platform	URL
+Frontend	Render (Static Site)	https://passop-6l55.onrender.com
 
-Frontend: Render / Netlify / Vercel
+Backend	Render (Web Service)	https://passop-7qba.onrender.com
 
-Backend: Render / Railway / Cyclic
+Database	MongoDB Atlas	Cloud-hosted database
 
-Database: MongoDB Atlas
+Ensure CORS and environment variables are configured correctly for production.
 
-Ensure CORS and API base URLs are configured correctly in production.
+---
 
 🖼️ Screenshots
 
 (Add UI screenshots here – Login, Signup, Password Manager Dashboard, etc.)
 
+---
+
 🔮 Future Enhancements
 
 📊 Password strength analyzer
-
-🧩 Import/export passwords (CSV)
-
+🧩 Import/exort passwords (CSV)
 🌈 Dark mode
-
 🧑‍💻 Admin panel for monitoring users
-
 🔔 Email/password recovery system
+
+---
 
 🙌 Credits
 
 Developed by Manas Pandey
-A full-stack project showcasing secure authentication, data encryption, and modern frontend-backend integration.
+
+🎓 First Year M.Sc. IT | 💻 Full Stack (MERN) Developer
+
+A full-stack MERN project showcasing secure CRUD operations, REST API integration, and responsive UI/UX — deployed seamlessly using Render.
