@@ -282,9 +282,9 @@ const Manager = () => {
                   <div key={item.id} className="bg-blue-100 rounded-lg p-4 shadow-sm">
                     <div className="flex justify-between items-start gap-2">
                       <div className="flex-1 min-w-0">
-                        <div className="text-sm text-gray-700 font-semibold truncate">{item.site}</div>
-                        <div className="text-sm text-gray-600 truncate">User: {item.username}</div>
-                        <div className="text-sm text-gray-600 truncate">Pass: {item.password}</div>
+                        <div className="text-sm text-gray-700 font-semibold truncate">Site: {item.site}</div>
+                        <div className="text-sm text-gray-600 truncate">Username: {item.username}</div>
+                        <div className="text-sm text-gray-600 truncate">Password: {"*".repeat(item.password.length)}</div>
                       </div>
 
                       <div className="flex flex-col items-end gap-2">
