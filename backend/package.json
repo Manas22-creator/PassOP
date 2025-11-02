@@ -1,21 +1,22 @@
 {
-  "name": "backend",
+  "name": "passop-backend",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Backend for PassOP Password Manager",
+  "main": "server.js",
+  "type": "commonjs",
   "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["express", "mongodb", "password-manager"],
+  "author": "Manas Pandey",
   "license": "ISC",
-  "type": "commonjs",
   "dependencies": {
-    "body-parser": "^2.2.0",
+    "body-parser": "^1.20.3",
     "cors": "^2.8.5",
-    "dotenv": "^17.2.3",
-    "express": "^5.1.0",
-    "mongodb": "^6.20.0",
-    "mongoose": "^8.19.2"
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "mongodb": "^6.8.0"
   }
 }
