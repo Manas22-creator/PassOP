@@ -14,7 +14,7 @@ const Manager = () => {
   const [passwordArray, setPasswordArray] = useState([]);
 
   const getPasswords = async () => {
-    let req = await fetch("http://localhost:3000/")
+    let req = await fetch("https://passop-7qba.onrender.com/")
     let password = await req.json();
     setPasswordArray(password);
 
@@ -55,7 +55,7 @@ const Manager = () => {
   if (form.site.length > 3 && form.username.length > 3 && form.password.length > 3) {
     // If editing an existing password (has an id)
     if (form.id) {
-      await fetch("http://localhost:3000/", {
+      await fetch("https://passop-7qba.onrender.com/", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: form.id }),
@@ -67,7 +67,7 @@ const Manager = () => {
     const newPasswords = [...passwordArray, newItem];
     setPasswordArray(newPasswords);
 
-    await fetch("http://localhost:3000/", {
+    await fetch("https://passop-7qba.onrender.com/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newItem),
@@ -95,7 +95,7 @@ const Manager = () => {
       const updated = passwordArray.filter((item) => item.id !== id);
       setPasswordArray(updated);
       // localStorage.setItem("passwords", JSON.stringify(updated));
-      let res = await fetch("http://localhost:3000/", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }) })
+      let res = await fetch("https://passop-7qba.onrender.com/", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }) })
       toast.error("Password Deleted!", { position: "top-right", autoClose: 3000, theme: "dark" });
     }
   };
